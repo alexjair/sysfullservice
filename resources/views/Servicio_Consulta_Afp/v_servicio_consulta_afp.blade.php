@@ -23,7 +23,7 @@
         </div>
         <div class="row">
             <div class="col">               
-                <div class="shadow-lg p-3 mb-5 mt-4 bg-body rounded">                                    
+                <div class="shadow-lg p-4 mb-5 mt-2 bg-body rounded">                                    
                     <div class="row g-3">
                         <div class="col-md-4 position-relative">
                             <label for="nombre" class="form-label">Ingrese Documento de <b>Identidad {DNI}</b>:</label>
@@ -49,6 +49,20 @@
 </body>
 </html>
 
+<div class="modal" tabindex="-1" id="serv_progressModal">
+    <div class="modal-dialog modal-dm modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title">Resolviendo la consulta..</h6>
+        </div>
+        <div class="modal-body">
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
 <script>      
 
     /*********[ CSRF-KEY ]********/
@@ -80,11 +94,24 @@
             
             console.log(dni);		
             
+            //var myModal = new bootstrap.Modal(document.getElementById('serv_progressModal'), options)
+            const myModal = new bootstrap.Modal('#serv_progressModal', {
+                keyboard: true
+            })
+            
+            //show.bs.myModal;
+            myModal.show();
+            
+            
             $.post('{{asset('serv_afp/fun_obtener_afp')}}',
                 {
                     dni 	: dni
                 }, 
                 function(data){
+                    //Ocultar modal.
+                    myModal.hide();
+                    
+                    //Mostrar Informacion en el dom
                     console.log(data);
                     $("#div_contenido").html(data);
                     
@@ -93,14 +120,13 @@
                     console.log(elem);
                     
                     if(elem == null || elem == undefined ) {
+                        $("#div_contenido_mostrar").html(data);
                         console.log('fail');
                         //alert(data);
                         alert('No se ha encontrado ningún afiliado con el documento de identidad ingresado.');
-                        $("#div_contenido_mostrar").html(data);
                         return false;		
-                        
                     }else{
-                        console.log('succes');
+                        console.log('success');
                     }
                     
                     var ap=document.getElementById("ApellidoPaterno").value;
